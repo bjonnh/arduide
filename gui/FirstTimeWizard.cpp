@@ -102,7 +102,7 @@ FirstTimeWizard::FirstTimeWizard(QWidget *parent)
     projectLabel->setText(projectLabel->text().arg(PROJECT_NAME).arg(PROJECT_AUTHORS));
     urlLabel->setText(urlLabel->text().arg(PROJECT_URL));
 
-    url = "http://arduino.googlecode.com/files/arduino-" ARDUINO_SDK_VERSION_NAME;
+    url = "http://downloads.arduino.cc/arduino-" ARDUINO_SDK_VERSION_NAME;
 
     // set up the download page
 #if defined(Q_OS_WIN32) || defined(Q_OS_WIN64) // Windows
@@ -119,15 +119,15 @@ FirstTimeWizard::FirstTimeWizard(QWidget *parent)
     #if defined(__x86_64__) // 64-bit Unix
         mDownloadOs = "64-bit Linux";
         if (QString(ARDUINO_SDK_VERSION_NAME) >= "1.0.1")
-            url += "-linux64.tgz";
+            url += "-linux64.tar.xz";
         else
-            url += "-64.tgz";
+            url += "-64.tar.xz";
     #elif defined(__i386__) // 32-bit Unix
         mDownloadOs = "32-bit Linux";
         if (QString(ARDUINO_SDK_VERSION_NAME) >= "1.0.1")
-            url += "-linux32.tgz";
+            url += "-linux32.tar.xz";
         else
-            url += ".tgz";
+            url += ".tar.xz";
     #else // other
         #error unsupported architecture
     #endif
@@ -278,7 +278,7 @@ bool FirstTimeWizard::validateCurrentPage()
 #else // Linux, other Unix
             extractCommand = "tar";
             extractArgs = QStringList()
-                << "-x" << "-z" << "-f" << archive.fileName()
+                << "-x" << "-J" << "-f" << archive.fileName()
                 << "-C" << destinationPath;
 #endif
             QFutureWatcher<int> extractWatcher;

@@ -27,7 +27,6 @@ This program is free software; you can redistribute it and/or modify
  */
 
 #include "Builder.h"
-
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -159,7 +158,9 @@ bool Builder::build(const QString &code, bool upload)
     }
 
     emit logImportant(tr("Compiling for %0...").arg(board()->name()));
+
     mBuildDir.reset(new QxtTemporaryDir(QDir(QDir::tempPath()).filePath("arduino-build")));
+
     QString buildPath = mBuildDir->path();
 
     QStringList cflags = Toolkit::avrCFlags(board());
@@ -196,10 +197,15 @@ bool Builder::build(const QString &code, bool upload)
 
     // compile the libraries
     QString path = Toolkit::hardwarePath()+"/arduino/cores/arduino/Arduino.h";
-    if (QFileInfo(path).exists())
+    if (QFileInfo(path).exists()) {
         cxxflags << "-include" << "Arduino.h";
-    else
-        cxxflags << "-include" << "WProgram.h";
+    } else {
+	path = Toolkit::hardwarePath()+"/arduino/avr/cores/arduino/Arduino.h";
+	if (QFileInfo(path).exists())
+		cxxflags << "-include" << "Arduino.h";
+	else
+		cxxflags << "-include" << "WProgram.h";
+    }
 
     success = compileDependencies(objects, code, includePaths, buildPath, cflags, cxxflags, sflags);
     if (! success)
